@@ -1,0 +1,13 @@
+{
+  "name": "dauphine_lite",
+  "scripts": {
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "three": "^0.170.0"
+  }
+}

@@ -1,0 +1,32 @@
+/* pour recadrer la scène sur tout la page */
+canvas {
+    top: 0;
+    left: 0;
+    position: fixed;  
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #2f4486;
+    height: 500vh !important; /* pour scroll vertical */
+    overflow-x: hidden; /* Pas de scrolling horizontal */
+}
+
+#scrollDisplay {
+    position: fixed;
+}
+
+.sec-1 {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centrage horizontal */
+    align-items: center;     /* Centrage vertical */
+}
+
+h1 {
+    color: #fff;
+    position: fixed;
+}

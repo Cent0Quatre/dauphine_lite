@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="scrollDisplay">Pourcentage scrollé: 0.00%</div>
+    <div class="sec-1">
+        <h1>Bienvenue</h1>
+    </div>
+    <canvas id="canva_html"></canvas>
+    <script>
+        const scrollDisplay = document.getElementById('scrollDisplay');
+        // Ajouter un écouteur pour l'événement 'scroll'
+        window.addEventListener('scroll', () => {
+            const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            scrollDisplay.textContent = `Pourcentage scrollé: ${scrollPercentage.toFixed(2)}%`;
+        });
+
+        window.onbeforeunload = function () {
+            window.scrollTo(0, 0);
+        };
+    </script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

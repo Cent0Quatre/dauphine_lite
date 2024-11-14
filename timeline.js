@@ -4,6 +4,7 @@ import ScrollTrigger from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 export const coefLook = { valeur: 0 };
+export const coefRotaZ = { valeur: 0 };
 
 export function scrollTimeline(modelD, camera) {
     if (!modelD) return;
@@ -27,6 +28,14 @@ export function scrollTimeline(modelD, camera) {
         scrollTrigger: {
             start: "1500px",
             end: "1800px",
+            scrub: true
+        }
+    });
+    tl.to(coefRotaZ, {
+        valeur: 1,
+        scrollTrigger: {
+            start: "2300px",
+            end: "2500px",
             scrub: true
         }
     });

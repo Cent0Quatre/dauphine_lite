@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
-import { scrollTimeline, coefLook } from "./timeline";
+import { scrollTimeline, coefLook, coefRotaZ } from "./timeline";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -90,7 +90,7 @@ function animate() {
 
     if (modelD) {
         const time = Date.now() * 0.001; // Temps en secondes
-        modelD.position.y = Math.sin(time * 2) * 0.1; // Amplitude de 0.1
+        modelD.position.y = Math.sin(time * 2 /* vitesse d'oscilation */) * 0.1; // Amplitude de 0.1
 
         if (coefLook.valeur) {
             modelD.lookAt(
@@ -98,6 +98,12 @@ function animate() {
                 -mouseY * coefLook.valeur, 
                 7.5
             );
+        }
+
+        if (coefRotaZ.valeur) {
+            // utilisation de la tangeante hyperbolique pour des valeurs de rotation de moins en moins grandes et plus smooth quand on s'éloigne du centre de l'écran (mouseX=0)
+            const scal = 3 // accentue le "pic" de part et d'autre de la fonction
+            modelD.rotation.z = Math.PI/2 + 3 * Math.tanh(scal*mouseX) * coefRotaZ.valeur;
         }
     }
 

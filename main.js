@@ -1,15 +1,12 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
-import { scrollTimeline, coefLook, coefRotaZ } from "./timeline";
-
-gsap.registerPlugin(ScrollTrigger);
+import { animClones } from "./anim_clones";
+import { scrollAnimCam } from "./tl_cam";
 
 // Variables de base pour créer une scène 3D
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight);
-camera.position.z = 10;
+camera.position.z = 15;
 const rendu = new THREE.WebGLRenderer({
     canvas: document.querySelector("#canva_html"), 
     alpha: true 
@@ -25,36 +22,25 @@ window.addEventListener('resize', () => {
 });
 
 // Charger les modèles .glb
+const dClones = []; // Tableau pour stocker les clones
+
 const loader = new GLTFLoader();
-
-let modelD;
-let batiment;
-
 loader.load('models/d_3d_lite.glb', 
     function(glb) {
-        modelD = glb.scene;
-        modelD.scale.set(0.5, 0.5, 0.5);
-        modelD.position.set(-1, 0, 12);
-        scene.add(modelD);
+        const modelD = glb.scene;
+        modelD.scale.set(0.25, 0.25, 0.25);
 
-        // chargé en tant qu'enfant ralié à modelD
-        loader.load('models/batiment.glb', 
-            function(glb) {
-                batiment = glb.scene;
-                batiment.scale.set(0.75, 0.75, 0.75);
-                batiment.rotation.set(-Math.PI/2, Math.PI, 0);
-                batiment.position.set(-1, -0.1, -1.5);
-                modelD.add(batiment);
-            },
-            function(xhr) {
-                console.log("Batiment: " + (xhr.loaded / xhr.total * 100) + '% loaded');
-            },
-            function(error) {
-                console.error('Erreur de chargement', error);
-            }
-        );
+        const spacing = 2.5;
+        // des clones tout le long de l'écran
+        for (let i = 0; i < 12; i++) {
+            // Clone à droite
+            const cloneRight = modelD.clone();
+            cloneRight.position.set(i*spacing-15, 0, 0);
+            scene.add(cloneRight);
+            dClones.push(cloneRight);
+        }
 
-        scrollTimeline(modelD, camera);
+        animClones(dClones);
     },
     function(xhr) {
         console.log("D: " + (xhr.loaded / xhr.total * 100) + '% loaded');
@@ -64,6 +50,8 @@ loader.load('models/d_3d_lite.glb',
     }
 );
 
+/////////////////////////////////////////////////////////////////////////////////
+
 const ambientLight = new THREE.AmbientLight("#ffffff", 0.5);
 scene.add(ambientLight);
 // Fonction pour ajouter des lumières
@@ -72,7 +60,7 @@ function addLight(color, intensity, position) {
     light.position.set(...position);
     scene.add(light);
 }
-addLight("#ffffff", 50, [0, 2, 10]);
+addLight("#ffffff", 50, [0, 0, 6]);
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -88,26 +76,8 @@ document.addEventListener('mousemove', (event) => {
 function animate() {
     requestAnimationFrame(animate);
 
-    if (modelD) {
-        const time = Date.now() * 0.001; // Temps en secondes
-        modelD.position.y = Math.sin(time * 2 /* vitesse d'oscilation */) * 0.1; // Amplitude de 0.1
-
-        if (coefLook.valeur) {
-            modelD.lookAt(
-                3.5 * mouseX * coefLook.valeur, 
-                -mouseY * coefLook.valeur, 
-                7.5
-            );
-        }
-
-        if (coefRotaZ.valeur) {
-            // utilisation de la tangeante hyperbolique pour des valeurs de rotation de moins en moins grandes et plus smooth quand on s'éloigne du centre de l'écran (mouseX=0)
-            const scal = 3 // accentue le "pic" de part et d'autre de la fonction
-            modelD.rotation.z = Math.PI/2 + 3 * Math.tanh(scal*mouseX) * coefRotaZ.valeur;
-        }
-    }
-
     rendu.render(scene, camera);
 };
 
+scrollAnimCam(camera);
 animate();
